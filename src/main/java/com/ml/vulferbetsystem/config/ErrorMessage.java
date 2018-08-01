@@ -1,4 +1,4 @@
-package com.ml.vulferbetsystem.api.handler;
+package com.ml.vulferbetsystem.config;
 
 public class ErrorMessage {
 
@@ -11,6 +11,7 @@ public class ErrorMessage {
     public ErrorMessage() {
     }
 
+    //getters and setters
     public String getMessage() {
         return message;
     }

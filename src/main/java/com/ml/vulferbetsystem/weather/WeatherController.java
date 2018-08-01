@@ -1,4 +1,4 @@
-package com.ml.vulferbetsystem.api.controller;
+package com.ml.vulferbetsystem.weather;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
