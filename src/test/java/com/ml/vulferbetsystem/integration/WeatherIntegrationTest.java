@@ -14,7 +14,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class WeatherControllerTest {
+public class WeatherIntegrationTest {
     @LocalServerPort
     private int port;
 
@@ -22,16 +22,16 @@ public class WeatherControllerTest {
     private TestRestTemplate testRestTemplate;
 
     @Test
-    public void wheatherControllerHelloWordOk(){
+    public void weatherControllerHelloWordOk(){
         ResponseEntity<String> result = this.testRestTemplate.getForEntity(
                 "http://localhost:" + this.port + "/hello-world", String.class);
         then(result.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
-    public void wheatherControllerGetWheatherOk(){
+    public void weatherControllerGetWeatherOK(){
         ResponseEntity<String> result = this.testRestTemplate.getForEntity(
-                "http://localhost:" + this.port + "/wheather", String.class);
+                "http://localhost:" + this.port + "/weather?day=123", String.class);
         then(result.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

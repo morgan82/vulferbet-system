@@ -29,9 +29,6 @@ dependencies {
 
 	compile files('lib/ojdbc6-11.2.0.3.jar')
 
-
-	annotationProcessor("org.projectlombok:lombok:1.16.20")//investigar
-	compileOnly("org.projectlombok:lombok:1.16.20")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 
 }
