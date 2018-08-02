@@ -1,5 +1,7 @@
 package com.ml.vulferbetsystem.weather;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum WeatherType {
 
     RAIN("Lluvia"),
@@ -13,7 +15,9 @@ public enum WeatherType {
         this.value = value;
     }
 
+    @JsonValue
     public String value() {
         return this.value;
     }
+
 }

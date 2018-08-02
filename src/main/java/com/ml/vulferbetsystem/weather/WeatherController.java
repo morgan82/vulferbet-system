@@ -1,13 +1,16 @@
 package com.ml.vulferbetsystem.weather;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class WeatherController {
+
+    @Autowired
+    private WeatherService weatherService;
 
     @GetMapping("/hello-world")
     public String sayHello() {
@@ -15,8 +18,8 @@ public class WeatherController {
     }
 
     @GetMapping(value = "/weather", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getWeatherByDay(@RequestParam(value = "day") String day) {
+    public WeatherDTO getWeatherByDay(@RequestParam(value = "day") int day) {
 
-        return "TODO: clima del sistema vulferbet con dia: " + day;
+        return weatherService.getWeatherByDay(day);
     }
 }
