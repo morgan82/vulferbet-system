@@ -1,6 +1,6 @@
 package com.ml.vulferbetsystem.weather;
 
-public enum WeatherTypes {
+public enum WeatherType {
 
     RAIN("Lluvia"),
     DROUGHT("Sequia"),
@@ -9,7 +9,7 @@ public enum WeatherTypes {
 
     private String value;
 
-    WeatherTypes(String value) {
+    WeatherType(String value) {
         this.value = value;
     }
 

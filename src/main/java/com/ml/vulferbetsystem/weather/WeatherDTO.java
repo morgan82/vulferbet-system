@@ -2,10 +2,9 @@ package com.ml.vulferbetsystem.weather;
 
 public class WeatherDTO {
     private int day;
-    private WeatherTypes weatherTypes;
+    private WeatherType weatherTypes;
 
     //getters and setters
-
     public int getDay() {
         return day;
     }
@@ -14,11 +13,11 @@ public class WeatherDTO {
         this.day = day;
     }
 
-    public WeatherTypes getWeatherTypes() {
+    public WeatherType getWeatherTypes() {
         return weatherTypes;
     }
 
-    public void setWeatherTypes(WeatherTypes weatherTypes) {
+    public void setWeatherTypes(WeatherType weatherTypes) {
         this.weatherTypes = weatherTypes;
     }
 }
