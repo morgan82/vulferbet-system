@@ -2,6 +2,7 @@ package com.ml.vulferbetsystem.weather;
 
 import com.ml.vulferbetsystem.config.ErrorType;
 import com.ml.vulferbetsystem.config.StatusCodeException;
+import com.ml.vulferbetsystem.weather.repository.WeatherRepositoryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class WeatherService {
 
     @Autowired
-    private WeatherRepository repository;
+    private WeatherRepositoryWrapper repository;
 
     public WeatherDTO getWeatherByDay(int days) {
 
