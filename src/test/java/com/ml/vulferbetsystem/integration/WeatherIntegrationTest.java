@@ -1,5 +1,7 @@
 package com.ml.vulferbetsystem.integration;
 
+import com.ml.vulferbetsystem.config.ErrorMessage;
+import com.ml.vulferbetsystem.config.ErrorType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +31,10 @@ public class WeatherIntegrationTest {
     }
 
     @Test
-    public void weatherControllerGetWeatherOK(){
-        ResponseEntity<String> result = this.testRestTemplate.getForEntity(
-                "http://localhost:" + this.port + "/weather?day=123", String.class);
-        then(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+    public void weatherControllerGetWeatherNoFound(){
+        ResponseEntity<ErrorMessage> result = this.testRestTemplate.getForEntity(
+                "http://localhost:" + this.port + "/weather?day=123", ErrorMessage.class);
+        then(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        then(result.getBody().getMessage()).isEqualTo(ErrorType.WEATHER_NOT_FOUND);
     }
 }
