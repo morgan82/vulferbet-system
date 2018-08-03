@@ -25,6 +25,14 @@ public class Weather {
     private Date weatherDate;
 
 
+    public Weather() {
+    }
+
+    public Weather(WeatherType weatherType, Date weatherDate) {
+        this.weatherType = weatherType;
+        this.weatherDate = weatherDate;
+    }
+
     //getters and setters
     public Long getId() {
         return id;

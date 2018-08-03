@@ -6,8 +6,8 @@ public enum WeatherType {
 
     RAIN("Lluvia"),
     DROUGHT("Sequia"),
-    PRESSURE("condicion optima de Presion"),
-    TEMPERATURE("condicion optima de Temperatura");
+    PRESSURE_AND_TEMPERATURE("Condicion optima de Presion y temperatura"),
+    NORMAL("Normal");
 
     private String value;
 

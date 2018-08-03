@@ -1,11 +1,13 @@
 package com.ml.vulferbetsystem.repositories.weather;
 
+import com.ml.vulferbetsystem.domain.Weather;
 import com.ml.vulferbetsystem.error.ErrorType;
 import com.ml.vulferbetsystem.error.StatusCodeException;
-import com.ml.vulferbetsystem.domain.Weather;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class WeatherRepositoryWrapper {
@@ -22,6 +24,10 @@ public class WeatherRepositoryWrapper {
         } else {
             throw new StatusCodeException(HttpStatus.UNPROCESSABLE_ENTITY, ErrorType.PROCESSING_WEATHER);
         }
+    }
+
+    public List<Weather> saveAll(List<Weather> weathers) {
+        return this.repository.saveAll(weathers);
     }
 
     public boolean isBusy() {
