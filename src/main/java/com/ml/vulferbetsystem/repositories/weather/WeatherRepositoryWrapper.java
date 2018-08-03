@@ -1,8 +1,8 @@
-package com.ml.vulferbetsystem.weather.repository;
+package com.ml.vulferbetsystem.repositories.weather;
 
-import com.ml.vulferbetsystem.config.ErrorType;
-import com.ml.vulferbetsystem.config.StatusCodeException;
-import com.ml.vulferbetsystem.weather.Weather;
+import com.ml.vulferbetsystem.error.ErrorType;
+import com.ml.vulferbetsystem.error.StatusCodeException;
+import com.ml.vulferbetsystem.domain.Weather;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,11 @@ public class WeatherRepositoryWrapper {
         }
     }
 
+    public boolean isBusy() {
+        return busy;
+    }
 
-
+    public void setBusy(boolean busy) {
+        this.busy = busy;
+    }
 }

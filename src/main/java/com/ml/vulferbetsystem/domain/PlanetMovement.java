@@ -1,10 +1,6 @@
-package com.ml.vulferbetsystem.planet;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+package com.ml.vulferbetsystem.domain;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,11 +18,19 @@ public class PlanetMovement {
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "planet_movement_generator")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "PLANET_ID", nullable = false)
     private Planet planet;
 
-    private int positionDegree;
+    private int angulePosition;
+
+    public PlanetMovement(int angulePosition, Planet planet) {
+        this.angulePosition = angulePosition;
+        this.planet = planet;
+    }
+
+    public PlanetMovement() {
+    }
 
     //getters and setters
     public Long getId() {
@@ -45,11 +49,11 @@ public class PlanetMovement {
         this.planet = planet;
     }
 
-    public int getPositionDegree() {
-        return positionDegree;
+    public int getAngulePosition() {
+        return angulePosition;
     }
 
-    public void setPositionDegree(int positionDegree) {
-        this.positionDegree = positionDegree;
+    public void setAngulePosition(int angulePosition) {
+        this.angulePosition = angulePosition;
     }
 }

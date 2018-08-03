@@ -1,13 +1,15 @@
-package com.ml.vulferbetsystem.planet;
+package com.ml.vulferbetsystem.domain;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,14 +23,14 @@ public class Planet {
 
     private String name;
 
-    private int sunDistance;
+    private double sunDistance;
 
     private int angularVelocity;
 
-    private int initialPosition;
+    private double initialPosition;
 
-    @OneToMany(mappedBy = "planet",cascade = CascadeType.ALL )
-    private List<PlanetMovement> movements;
+    @OneToMany(mappedBy = "planet", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<PlanetMovement> movements = new ArrayList<>();
 
     //getters and setters
     public Long getId() {
@@ -47,7 +49,7 @@ public class Planet {
         this.name = name;
     }
 
-    public int getSunDistance() {
+    public double getSunDistance() {
         return sunDistance;
     }
 
@@ -63,7 +65,7 @@ public class Planet {
         this.angularVelocity = angularVelocity;
     }
 
-    public int getInitialPosition() {
+    public double getInitialPosition() {
         return initialPosition;
     }
 
@@ -77,5 +79,9 @@ public class Planet {
 
     public void setMovements(List<PlanetMovement> movements) {
         this.movements = movements;
+    }
+
+    public int calculateMovement(int day) {
+        return Math.abs(day * angularVelocity)%360;
     }
 }

@@ -1,4 +1,4 @@
-package com.ml.vulferbetsystem.config;
+package com.ml.vulferbetsystem.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;

@@ -1,7 +1,7 @@
 package com.ml.vulferbetsystem.integration;
 
-import com.ml.vulferbetsystem.config.ErrorMessage;
-import com.ml.vulferbetsystem.config.ErrorType;
+import com.ml.vulferbetsystem.error.ErrorMessage;
+import com.ml.vulferbetsystem.error.ErrorType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

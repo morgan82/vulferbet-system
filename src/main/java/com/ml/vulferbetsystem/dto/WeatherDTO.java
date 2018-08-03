@@ -1,4 +1,6 @@
-package com.ml.vulferbetsystem.weather;
+package com.ml.vulferbetsystem.dto;
+
+import com.ml.vulferbetsystem.domain.WeatherType;
 
 public class WeatherDTO {
     private int day;

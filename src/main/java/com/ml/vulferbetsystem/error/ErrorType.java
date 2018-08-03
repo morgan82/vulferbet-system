@@ -1,4 +1,4 @@
-package com.ml.vulferbetsystem.config;
+package com.ml.vulferbetsystem.error;
 
 public class ErrorType {
     public static final String WEATHER_NOT_FOUND = "Clima no encontrado";

@@ -1,4 +1,4 @@
-package com.ml.vulferbetsystem.weather;
+package com.ml.vulferbetsystem.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

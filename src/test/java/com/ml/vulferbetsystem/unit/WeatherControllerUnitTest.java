@@ -1,7 +1,7 @@
 package com.ml.vulferbetsystem.unit;
 
-import com.ml.vulferbetsystem.weather.WeatherController;
-import com.ml.vulferbetsystem.weather.WeatherService;
+import com.ml.vulferbetsystem.controller.WeatherController;
+import com.ml.vulferbetsystem.service.WeatherService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.ml.vulferbetsystem.config;
+package com.ml.vulferbetsystem.error;
 
 public class ErrorMessage {
 

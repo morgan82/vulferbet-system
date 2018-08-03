@@ -1,11 +1,9 @@
-package com.ml.vulferbetsystem.weather.repository;
+package com.ml.vulferbetsystem.repositories.weather;
 
-import com.ml.vulferbetsystem.weather.Weather;
+import com.ml.vulferbetsystem.domain.Weather;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.Date;
 
 @Repository
 interface WeatherRepository extends JpaRepository<Weather, Long> {
