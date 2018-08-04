@@ -1,4 +1,4 @@
-package com.ml.vulferbetsystem.service;
+package com.ml.vulferbetsystem.componet;
 
 import com.ml.vulferbetsystem.domain.Point;
 

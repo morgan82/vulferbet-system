@@ -27,9 +27,9 @@ public class Planet {
 
     private int angularVelocity;
 
-    private double initialPosition;
+    private int initialPosition;
 
-    @OneToMany(mappedBy = "planet", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "planet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PlanetMovement> movements = new ArrayList<>();
 
     //getters and setters
@@ -65,7 +65,7 @@ public class Planet {
         this.angularVelocity = angularVelocity;
     }
 
-    public double getInitialPosition() {
+    public int getInitialPosition() {
         return initialPosition;
     }
 
@@ -82,6 +82,6 @@ public class Planet {
     }
 
     public int calculateMovement(int day) {
-        return Math.abs(day * angularVelocity)%360;
+        return Math.abs(day * angularVelocity) % 360;
     }
 }

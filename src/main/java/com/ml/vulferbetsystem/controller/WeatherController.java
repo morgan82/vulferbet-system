@@ -22,6 +22,7 @@ public class WeatherController {
     @GetMapping(value = "/weather", produces = MediaType.APPLICATION_JSON_VALUE)
     public WeatherDTO getWeatherByDay(@RequestParam(value = "day") int day) {
 
-        return weatherService.getWeatherByDay(day);
+//        return weatherService.getWeatherByDay(day);
+        return weatherService.getWeatherAndPlanetByDay(day);
     }
 }

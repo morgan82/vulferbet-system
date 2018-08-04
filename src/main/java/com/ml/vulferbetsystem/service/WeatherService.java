@@ -1,5 +1,8 @@
 package com.ml.vulferbetsystem.service;
 
+import com.ml.vulferbetsystem.componet.DroughtWeatherCalculator;
+import com.ml.vulferbetsystem.componet.PressureAndTemperatureWeatherCalculator;
+import com.ml.vulferbetsystem.componet.RainWeatherCalculator;
 import com.ml.vulferbetsystem.domain.ConfigParam;
 import com.ml.vulferbetsystem.domain.ConfigParamConstants;
 import com.ml.vulferbetsystem.domain.Planet;
@@ -7,10 +10,12 @@ import com.ml.vulferbetsystem.domain.PlanetMovement;
 import com.ml.vulferbetsystem.domain.Point;
 import com.ml.vulferbetsystem.domain.Weather;
 import com.ml.vulferbetsystem.domain.WeatherType;
+import com.ml.vulferbetsystem.dto.PlanetDTO;
 import com.ml.vulferbetsystem.dto.WeatherDTO;
 import com.ml.vulferbetsystem.error.ErrorType;
 import com.ml.vulferbetsystem.error.StatusCodeException;
 import com.ml.vulferbetsystem.repositories.ConfigParamRepository;
+import com.ml.vulferbetsystem.repositories.PlanetMovementRepository;
 import com.ml.vulferbetsystem.repositories.PlanetRepository;
 import com.ml.vulferbetsystem.repositories.weather.WeatherRepositoryWrapper;
 import com.ml.vulferbetsystem.utils.GeometryUtils;
@@ -20,12 +25,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
+import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -37,10 +45,16 @@ public class WeatherService {
     private PlanetRepository planetRepository;
     @Autowired
     private ConfigParamRepository configParamRepository;
+    @Autowired
+    private PlanetMovementRepository planetMovementRepository;
+    @Autowired
+    @Qualifier("rainWeatherTriangleCalculator")
     private RainWeatherCalculator rainWeatherCalculator;
     @Autowired
     @Qualifier("droughtWeatherStraightCalculator")
     private DroughtWeatherCalculator droughtWeatherCalculator;
+    @Autowired
+    @Qualifier("pressureAndTemperatureWeatherStraightCalculator")
     private PressureAndTemperatureWeatherCalculator pressAndTempWeatherCalculator;
 
     public WeatherDTO getWeatherByDay(int days) {
@@ -53,9 +67,28 @@ public class WeatherService {
         }
     }
 
+    public WeatherDTO getWeatherAndPlanetByDay(int days) {
+
+        Weather byWeatherDate = weatherRepository.findByWeatherDate(days);
+        if (byWeatherDate == null) {
+            throw new StatusCodeException(HttpStatus.NOT_FOUND, ErrorType.WEATHER_NOT_FOUND);
+        } else {
+            List<PlanetMovement> planetPositions = planetMovementRepository.findAllByPositionDate(days);
+            List<PlanetDTO> planetsDTO = planetPositions.stream().map(pp -> new PlanetDTO(pp.getPlanet().getName(),
+                    GeometryUtils.getCartesianCoordinatesFromPolar(pp.getPlanet().getSunDistance(), pp.getPositionAngle())))
+                    .collect(Collectors.toList());
+            return new WeatherDTO(days, byWeatherDate.getWeatherType(), planetsDTO);
+        }
+    }
+
+    @Transactional
     public void calculateWeather() {
         weatherRepository.setBusy(true);
+        StopWatch stopWatch = new StopWatch();
         try {
+            log.info("****Calculando el clima");
+            stopWatch.start();
+
             ConfigParam fullWeatherProcessing = configParamRepository.findByName(
                     ConfigParamConstants.FULL_WEATHER_PROCESSING.name());
             if (fullWeatherProcessing != null) {
@@ -73,27 +106,29 @@ public class WeatherService {
                     List<Weather> weathers = new ArrayList<>();
                     java.util.Date dayWeather;
                     for (int i = 1; i <= daysToProcess; i++) {
-                        for (Planet p : planets) {
-                            angulePosition = calculateAngulePosition(p.getAngularVelocity(), i);
-                            p.getMovements().add(new PlanetMovement(angulePosition, p));
-                            points.add(GeometryUtils.polarToCartesian(p.getSunDistance(), angulePosition));
-                        }
                         dayWeather = java.sql.Date.valueOf(LocalDate.now().plusDays(i));
-                        points.forEach(p -> log.info(p.toString()));
-
+                        for (Planet p : planets) {
+                            angulePosition = GeometryUtils.getAnguleByVelocityAndTimes(p.getInitialPosition(),
+                                    p.getAngularVelocity(), i);
+                            p.getMovements().add(new PlanetMovement(angulePosition, p, dayWeather));
+                            points.add(GeometryUtils.getCartesianCoordinatesFromPolar(p.getSunDistance(), angulePosition));
+                        }
                         if (rainWeatherCalculator.isRainWeather(points, i)) {
                             weathers.add(new Weather(WeatherType.RAIN, dayWeather));
-                            //TODO:LLuvioso
+//                            log.info((WeatherType.RAIN + "-> " + points.stream().map(Point::toString).collect(Collectors.joining())));
                         } else if (droughtWeatherCalculator.isDroughtWeather(points, i)) {
                             weathers.add(new Weather(WeatherType.DROUGHT, dayWeather));
-                            //TODO:Sequia
+                            log.info("\n"+WeatherType.DROUGHT + "-> " + points.stream().map(Point::toString).collect(Collectors.joining("\n","\n","\n")));
                         } else if (pressAndTempWeatherCalculator.isPressureAndTempWeather(points, i)) {
                             weathers.add(new Weather(WeatherType.PRESSURE_AND_TEMPERATURE, dayWeather));
-                            //TODO:Condicion optima de Presion y Temperatura
+//                            log.info("\n"+WeatherType.PRESSURE_AND_TEMPERATURE + "-> " + points.stream().map(Point::toString).collect(Collectors.joining("\n","\n","\n")));
                         } else {
                             weathers.add(new Weather(WeatherType.NORMAL, dayWeather));
+//                            log.info((WeatherType.NORMAL + "-> " + points.stream().map(Point::toString).collect(Collectors.joining())));
+
                             //TODO:normal
                         }
+                        points.clear();
                     }
                     planetRepository.saveAll(planets);
                     weatherRepository.saveAll(weathers);
@@ -107,6 +142,8 @@ public class WeatherService {
             log.error("Ocurrio un Error ", e);
         } finally {
             weatherRepository.setBusy(false);
+            stopWatch.stop();
+            log.info("****Clima calculado en {} segundos", stopWatch.getTotalTimeSeconds());
         }
     }
 
@@ -118,14 +155,5 @@ public class WeatherService {
         return Math.abs(duration.toDays());
     }
 
-    private static int calculateAngulePosition(int angularVelocity, int days) {
-        if (angularVelocity > 0) {
-            return (days * angularVelocity) % 360;
-        } else if (angularVelocity < 0) {
-            int aux = angularVelocity * days;
-            return (aux % 360) + 360;
-        } else {
-            return 0;
-        }
-    }
+
 }

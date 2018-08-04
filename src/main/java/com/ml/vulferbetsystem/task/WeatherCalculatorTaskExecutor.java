@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+
 @Service
 public class WeatherCalculatorTaskExecutor {
     private static final Logger log = LoggerFactory.getLogger(WeatherCalculatorTaskExecutor.class);
@@ -23,7 +24,7 @@ public class WeatherCalculatorTaskExecutor {
         log.info("*** Strat ***");
         this.execute();
         stopWatch.stop();
-        log.info("*** Stop in: {} ***", stopWatch.getTotalTimeMillis());
+        log.info("*** Stop in: {} ***", stopWatch.getTotalTimeSeconds());
     }
 
 

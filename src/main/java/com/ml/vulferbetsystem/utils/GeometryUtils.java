@@ -1,23 +1,26 @@
 package com.ml.vulferbetsystem.utils;
 
 import com.ml.vulferbetsystem.domain.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class GeometryUtils {
-
+    private static final Logger log = LoggerFactory.getLogger(GeometryUtils.class);
+    private static final int PRECISION = ConfigUtils.GEOMETRY_UTILS_PRECISION;
 
     /**
      * Convierte una coordenada polar a cartesiana
      *
      * @param radius
-     * @param angule
+     * @param angule in degrees
      * @return coordenada cartesiana
      */
-    public static Point polarToCartesian(double radius, double angule) {
-        double x = radius * Math.cos(angule);
-        double y = radius * Math.sin(angule);
+    public static Point getCartesianCoordinatesFromPolar(double radius, double angule) {
+        double x = round(radius * Math.cos(Math.toRadians(angule)),10);
+        double y = round(radius * Math.sin(Math.toRadians(angule)), 10);
 
         return new Point(x, y);
     }
@@ -41,13 +44,17 @@ public class GeometryUtils {
                 pXY = points.get(i);
                 // Ecuacion de la recta -> y-y1 = m (x-x1)
                 // si no cumple la ecuacion el punto no pertenece a la misma
-                if (!(pXY.getY() - p1.getY() == m * (pXY.getX() - p1.getY()))) {
+                double ySide = pXY.getY() - p1.getY();
+                double xSide = m * (pXY.getX() - p1.getY());
+                double equationResult = ySide - xSide;
+
+                if (Math.abs(equationResult) > PRECISION) {
                     return false;
                 }
             }
             return true;
         } else {//X constante
-            return points.stream().allMatch(p -> p.getX() == p1.getX());
+            return points.stream().allMatch(p -> Math.abs(p.getX() - p1.getX()) < PRECISION);
         }
     }
 
@@ -75,7 +82,7 @@ public class GeometryUtils {
 
 
     /**
-     * Determina si el origen pertenece un triangulo
+     * Determina si el origen pertenece a un triangulo
      *
      * @param p1
      * @param p2
@@ -100,12 +107,48 @@ public class GeometryUtils {
         return (p1P2P3_Orientation >= 0) ? orientationSignWithOrigin >= 0 : orientationSignWithOrigin < 0;
     }
 
+    /**
+     * Determina un angulo dado una angulo inicial una velocidad angular
+     * por un periodo y la cantidad de periodos que se quiere  calcular
+     *
+     * @param angularVelocity
+     * @param times
+     * @return angulo calculado valores entre 0 y 359
+     */
+    public static int getAnguleByVelocityAndTimes(int initialPosition, int angularVelocity, int times) {
+        if (angularVelocity > 0) {
+            return (initialPosition + (times * angularVelocity)) % 360;
+        } else if (angularVelocity < 0) {
+            int aux = initialPosition + (angularVelocity * times);
+            return aux < 0 ? (aux % 360) + 360 : aux;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Redondea un numero a una candidad de decimales determinada
+     *
+     * @param number
+     * @param decimals
+     * @return numero redondeado
+     */
+    public static double round(double number, double decimals) {
+        return Math.round(number * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    }
+
     //private methods
     private static double getSlopeStraight(Point p1, Point p2) {
 
         double y = p2.getY() - p1.getY();
         double x = p2.getX() - p1.getX();
-        return y / x;
+        if (Math.abs(x) <= PRECISION) {
+            return (x >= 0) ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+        } else if (Math.abs(y) <= PRECISION) {
+            return 0;
+        } else {
+            return y / x;
+        }
     }
 
     private static double getTriangleOrientation(Point p1, Point p2, Point p3) {

@@ -26,6 +26,7 @@ repositories {
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile ('commons-configuration:commons-configuration:1.6')
 
 	compile files('lib/ojdbc6-11.2.0.3.jar')
 

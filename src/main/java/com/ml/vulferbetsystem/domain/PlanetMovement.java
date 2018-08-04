@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Table(name = "PLANET_MOVEMENT")
@@ -22,17 +23,29 @@ public class PlanetMovement {
     @JoinColumn(name = "PLANET_ID", nullable = false)
     private Planet planet;
 
-    private int angulePosition;
+    private int positionAngle;
 
-    public PlanetMovement(int angulePosition, Planet planet) {
-        this.angulePosition = angulePosition;
+    private Date positionDate;
+
+    public PlanetMovement(int positionAngle, Planet planet, Date positionDate) {
+        this.positionAngle = positionAngle;
         this.planet = planet;
+        this.positionDate = positionDate;
     }
 
     public PlanetMovement() {
     }
 
     //getters and setters
+
+    public Date getPositionDate() {
+        return positionDate;
+    }
+
+    public void setPositionDate(Date positionDate) {
+        this.positionDate = positionDate;
+    }
+
     public Long getId() {
         return id;
     }
@@ -49,11 +62,11 @@ public class PlanetMovement {
         this.planet = planet;
     }
 
-    public int getAngulePosition() {
-        return angulePosition;
+    public int getPositionAngle() {
+        return positionAngle;
     }
 
-    public void setAngulePosition(int angulePosition) {
-        this.angulePosition = angulePosition;
+    public void setPositionAngle(int positionAngle) {
+        this.positionAngle = positionAngle;
     }
 }

@@ -1,10 +1,12 @@
-package com.ml.vulferbetsystem.service;
+package com.ml.vulferbetsystem.componet;
 
 import com.ml.vulferbetsystem.domain.Point;
 import com.ml.vulferbetsystem.utils.GeometryUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class RainWeatherTriangleCalculator implements RainWeatherCalculator {
     @Override
     public boolean isRainWeather(List<Point> planetLocations, int days) {
