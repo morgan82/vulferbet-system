@@ -19,7 +19,7 @@ public class GeometryUtils {
      * @return coordenada cartesiana
      */
     public static Point getCartesianCoordinatesFromPolar(double radius, double angule) {
-        double x = round(radius * Math.cos(Math.toRadians(angule)),10);
+        double x = round(radius * Math.cos(Math.toRadians(angule)), 10);
         double y = round(radius * Math.sin(Math.toRadians(angule)), 10);
 
         return new Point(x, y);
@@ -45,7 +45,7 @@ public class GeometryUtils {
                 // Ecuacion de la recta -> y-y1 = m (x-x1)
                 // si no cumple la ecuacion el punto no pertenece a la misma
                 double ySide = pXY.getY() - p1.getY();
-                double xSide = m * (pXY.getX() - p1.getY());
+                double xSide = m * (pXY.getX() - p1.getX());
                 double equationResult = ySide - xSide;
 
                 if (Math.abs(equationResult) > PRECISION) {
@@ -54,7 +54,7 @@ public class GeometryUtils {
             }
             return true;
         } else {//X constante
-            return points.stream().allMatch(p -> Math.abs(p.getX() - p1.getX()) < PRECISION);
+            return points.stream().allMatch(p -> Math.abs(p.getX() - p1.getX()) <= PRECISION);
         }
     }
 
@@ -104,7 +104,11 @@ public class GeometryUtils {
         double orientationSignWithOrigin = p1P2POrigin_Orientation * p2P3POrigin_Orientation * p3P1POrigin_Orientation;
 
         //el signo de la orientacion del triangulo debe ser igual que con el punto de origen
-        return (p1P2P3_Orientation >= 0) ? orientationSignWithOrigin >= 0 : orientationSignWithOrigin < 0;
+        if (p1P2P3_Orientation >= 0) {
+            return p1P2POrigin_Orientation >= 0 && p2P3POrigin_Orientation >= 0 && p3P1POrigin_Orientation >= 0;
+        } else {
+            return p1P2POrigin_Orientation < 0 && p2P3POrigin_Orientation < 0 && p3P1POrigin_Orientation < 0;
+        }
     }
 
     /**
@@ -137,7 +141,30 @@ public class GeometryUtils {
         return Math.round(number * Math.pow(10, decimals)) / Math.pow(10, decimals);
     }
 
+    /**
+     * Determina el perimetro de un triangulo
+     *
+     * @param a
+     * @param b
+     * @param c
+     * @return
+     */
+    public static double getPerimeterFromTriangle(Point a, Point b, Point c) {
+        if (!isTriangle(a, b, c)) {
+            throw new IllegalArgumentException("Los puntos no forman un triangulo");
+        }
+        double distanceAB = distanceBetween2Point(a, b);
+        double distanceBC = distanceBetween2Point(b, c);
+        double distanceAC = distanceBetween2Point(a, c);
+
+        return distanceAB + distanceBC + distanceAC;
+    }
+
     //private methods
+    private static double distanceBetween2Point(Point a, Point b) {
+        return Math.sqrt(Math.pow(b.getX() - a.getX(), 2) + Math.pow(b.getY() - a.getY(), 2));
+    }
+
     private static double getSlopeStraight(Point p1, Point p2) {
 
         double y = p2.getY() - p1.getY();

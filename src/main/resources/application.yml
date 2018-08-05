@@ -21,4 +21,4 @@ spring.datasource.driver.class: oracle.jdbc.driver.OracleDriver
 tasks.weatherCalculator.cronExpression: 0 0 0 * * ?
 
 #utils
-utils.geometry.precision: 50
+utils.geometry.precision: 48

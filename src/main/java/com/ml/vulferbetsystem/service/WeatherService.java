@@ -105,6 +105,8 @@ public class WeatherService {
                     int angulePosition;
                     List<Weather> weathers = new ArrayList<>();
                     java.util.Date dayWeather;
+                    double maxPerimeter = 0;
+                    double auxPerimeter = 0;
                     for (int i = 1; i <= daysToProcess; i++) {
                         dayWeather = java.sql.Date.valueOf(LocalDate.now().plusDays(i));
                         for (Planet p : planets) {
@@ -115,13 +117,18 @@ public class WeatherService {
                         }
                         if (rainWeatherCalculator.isRainWeather(points, i)) {
                             weathers.add(new Weather(WeatherType.RAIN, dayWeather));
-//                            log.info((WeatherType.RAIN + "-> " + points.stream().map(Point::toString).collect(Collectors.joining())));
+                            auxPerimeter = GeometryUtils.getPerimeterFromTriangle(points.get(0), points.get(1), points.get(2));
+                            if (maxPerimeter < auxPerimeter) {
+                                maxPerimeter = auxPerimeter;
+                                log.info("\n maxPerimeter" + points.stream().map(Point::toString).collect(Collectors.joining("\n", "\n", "\n")));
+                            }
+//                            log.info("\n" + WeatherType.RAIN + "-> " + "\n dayWeather-> " + dayWeather + points.stream().map(Point::toString).collect(Collectors.joining("\n", "\n", "\n")));
                         } else if (droughtWeatherCalculator.isDroughtWeather(points, i)) {
                             weathers.add(new Weather(WeatherType.DROUGHT, dayWeather));
-                            log.info("\n"+WeatherType.DROUGHT + "-> " + points.stream().map(Point::toString).collect(Collectors.joining("\n","\n","\n")));
+//                            log.info("\n" + WeatherType.DROUGHT + "-> " + "\n dayWeather-> " + dayWeather + points.stream().map(Point::toString).collect(Collectors.joining("\n", "\n", "\n")));
                         } else if (pressAndTempWeatherCalculator.isPressureAndTempWeather(points, i)) {
                             weathers.add(new Weather(WeatherType.PRESSURE_AND_TEMPERATURE, dayWeather));
-//                            log.info("\n"+WeatherType.PRESSURE_AND_TEMPERATURE + "-> " + points.stream().map(Point::toString).collect(Collectors.joining("\n","\n","\n")));
+//                            log.info("\n" + WeatherType.PRESSURE_AND_TEMPERATURE + "-> " + "\n dayWeather-> " + dayWeather + points.stream().map(Point::toString).collect(Collectors.joining("\n", "\n", "\n")));
                         } else {
                             weathers.add(new Weather(WeatherType.NORMAL, dayWeather));
 //                            log.info((WeatherType.NORMAL + "-> " + points.stream().map(Point::toString).collect(Collectors.joining())));
