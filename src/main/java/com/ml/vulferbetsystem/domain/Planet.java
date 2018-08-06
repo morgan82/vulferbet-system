@@ -17,7 +17,7 @@ import java.util.List;
 public class Planet {
 
     @Id
-    @SequenceGenerator(name = "planet_generator", sequenceName = "vulferbet.PLANET_SEQ")
+    @SequenceGenerator(name = "planet_generator", sequenceName = "PLANET_SEQ")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "planet_generator")
     private Long id;
 

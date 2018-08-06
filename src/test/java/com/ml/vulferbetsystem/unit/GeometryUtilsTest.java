@@ -58,9 +58,9 @@ public class GeometryUtilsTest {
     }
     @Test
     public void originBelongToTriangleOK(){
-        Point p1 = new Point(43.5778713738,498.0973490459);
-        Point p2 = new Point(517.638090205,1931.8516525781);
-        Point p3 = new Point(-422.6182617407,906.3077870367);
+        Point p1 = new Point(512.85,-740.26);
+        Point p2 = new Point(517.64,1931.85);
+        Point p3 = new Point(-709.40,723.81);
         then(GeometryUtils.originBelongToTriangle(p1, p2, p3)).isTrue();
     }
     @Test
