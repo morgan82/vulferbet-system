@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum WeatherType {
 
     RAIN("Lluvia"),
+    MAX_RAIN("Lluvia, dia de mayor lluvia en el periodo"),
     DROUGHT("Sequia"),
     PRESSURE_AND_TEMPERATURE("Condicion optima de Presion y temperatura"),
     NORMAL("Normal");
