@@ -3,7 +3,6 @@ package com.ml.vulferbetsystem.unit;
 import com.ml.vulferbetsystem.domain.Point;
 import com.ml.vulferbetsystem.utils.ConfigUtils;
 import com.ml.vulferbetsystem.utils.GeometryUtils;
-import com.sun.deploy.xml.GeneralEntity;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -63,6 +62,23 @@ public class GeometryUtilsTest {
         Point p2 = new Point(517.638090205,1931.8516525781);
         Point p3 = new Point(-422.6182617407,906.3077870367);
         then(GeometryUtils.originBelongToTriangle(p1, p2, p3)).isTrue();
+    }
+    @Test
+    public void originBelongToTriangleNoOK(){
+        Point p1 = new Point((466.79), 179.18);
+        Point p2 = new Point(-1180.54,839.76);
+        Point p3 = new Point(258.82,965.93);
+        then(GeometryUtils.originBelongToTriangle(p1, p2, p3)).isFalse();
+
+        p1 = new Point(321.72,-217.38);
+        p2 = new Point(-1180.54,839.76);
+        p3 = new Point(570.32,823.16);
+        then(GeometryUtils.originBelongToTriangle(p1, p2, p3)).isFalse();
+
+        p1 = new Point(0.02,-0.01);
+        p2 = new Point(-1180.54,839.76);
+        p3 = new Point (570.32,823.16);
+        then(GeometryUtils.originBelongToTriangle(p1, p2, p3)).isFalse();
     }
     @Test
     public void isTrianguleOK(){

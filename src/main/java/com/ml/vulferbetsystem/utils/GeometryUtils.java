@@ -101,8 +101,6 @@ public class GeometryUtils {
         double p2P3POrigin_Orientation = getTriangleOrientation(p2, p3, pOrigin);
         //P3 P1 P0rigin
         double p3P1POrigin_Orientation = getTriangleOrientation(p3, p1, pOrigin);
-        double orientationSignWithOrigin = p1P2POrigin_Orientation * p2P3POrigin_Orientation * p3P1POrigin_Orientation;
-
         //el signo de la orientacion del triangulo debe ser igual que con el punto de origen
         if (p1P2P3_Orientation >= 0) {
             return p1P2POrigin_Orientation >= 0 && p2P3POrigin_Orientation >= 0 && p3P1POrigin_Orientation >= 0;
