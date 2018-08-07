@@ -88,85 +88,72 @@ public class WeatherService {
         try {
             log.info("****Calculando el clima");
             stopWatch.start();
+            List<Planet> planets = planetRepository.findAll();
+            cleanWeather(planets);
+            ConfigParam periodToProcess = configParamRepository.findByName(
+                    ConfigParamConstants.PERIOD_TO_PROCESS_IN_YEARS.name());
+            long daysToProcess = getDaysToProcess(periodToProcess);
 
-            ConfigParam fullWeatherProcessing = configParamRepository.findByName(
-                    ConfigParamConstants.FULL_WEATHER_PROCESSING.name());
-            if (fullWeatherProcessing != null) {
-                if (Boolean.valueOf(fullWeatherProcessing.getValue())) {
+            log.info("Total days to process {} ", daysToProcess);
 
-                    ConfigParam periodToProcess = configParamRepository.findByName(
-                            ConfigParamConstants.PERIOD_TO_PROCESS_IN_YEARS.name());
+            List<Point> points = new ArrayList<>();
 
-                    LocalDate futurePeriodDate = LocalDate.now().plusYears(Long.parseLong(periodToProcess.getValue()));
-                    long daysToProcess = DateUtils.getDaysBetweenTodayAndOtherDate(futurePeriodDate);
-                    log.info("Total days to process {} ", daysToProcess);
+            int angulePosition;
 
-                    List<Planet> planets = planetRepository.findAll();
-                    List<Point> points = new ArrayList<>();
+            List<Weather> weathers = new ArrayList<>();
+            java.util.Date dayWeather;
+            double maxPerimeter = 0;
+            double auxPerimeter;
+            Weather newWth;
 
-                    int angulePosition;
-
-                    List<Weather> weathers = new ArrayList<>();
-                    java.util.Date dayWeather;
-                    double maxPerimeter = 0;
-                    double auxPerimeter;
-                    Weather newWth;
-
-                    for (int i = 1; i <= daysToProcess; i++) {
-                        dayWeather = java.sql.Date.valueOf(LocalDate.now().plusDays(i));
-                        //Se guardan los movimientos de los planetas y se obtienen los puntos x e y de los mismos
-                        for (Planet p : planets) {
-                            angulePosition = GeometryUtils.getAnguleByVelocityAndTimes(p.getInitialPosition(),
-                                    p.getAngularVelocity(), i);
-                            p.getMovements().add(new PlanetMovement(angulePosition, p, dayWeather));
-                            points.add(GeometryUtils.getCartesianCoordinatesFromPolar(p.getSunDistance(), angulePosition));
-                        }
-                        //Se detemina el tipo de clima
-                        if (rainWeatherCalculator.isRainWeather(points, i)) {
-                            auxPerimeter = GeometryUtils.getPerimeterFromTriangle(points.get(0), points.get(1), points.get(2));
-                            if (maxPerimeter < auxPerimeter && maxPerimeter == 0) {
-                                maxPerimeter = auxPerimeter;
-                                newWth = new Weather(WeatherType.MAX_RAIN, dayWeather);
-                                weathers.add(newWth);
-                            } else if (maxPerimeter < auxPerimeter) {
-                                weathers.stream()
-                                        .filter(wt -> wt.getWeatherType().equals(WeatherType.MAX_RAIN))
-                                        .findAny()
-                                        .orElse(null)
-                                        .setWeatherType(WeatherType.RAIN);
-                                newWth = new Weather(WeatherType.MAX_RAIN, dayWeather);
-                                weathers.add(newWth);
-                            } else {
-                                newWth = new Weather(WeatherType.RAIN, dayWeather);
-                                weathers.add(newWth);
-                            }
-//                            log.info("\n" + WeatherType.RAIN + "-> " + "\n dayWeather-> " + dayWeather + points.stream().map(Point::toString).collect(Collectors.joining("\n", "\n", "\n")));
-                        } else if (droughtWeatherCalculator.isDroughtWeather(points, i)) {
-                            newWth = new Weather(WeatherType.DROUGHT, dayWeather);
-                            weathers.add(newWth);
-//                            log.info("\n" + WeatherType.DROUGHT + "-> " + "\n dayWeather-> " + dayWeather + points.stream().map(Point::toString).collect(Collectors.joining("\n", "\n", "\n")));
-                        } else if (pressAndTempWeatherCalculator.isPressureAndTempWeather(points, i)) {
-                            newWth = new Weather(WeatherType.PRESSURE_AND_TEMPERATURE, dayWeather);
-                            weathers.add(newWth);
-//                            log.info("\n" + WeatherType.PRESSURE_AND_TEMPERATURE + "-> " + "\n dayWeather-> " + dayWeather + points.stream().map(Point::toString).collect(Collectors.joining("\n", "\n", "\n")));
-                        } else {
-                            newWth = new Weather(WeatherType.NORMAL, dayWeather);
-                            weathers.add(newWth);
-//                            log.info((WeatherType.NORMAL + "-> " + points.stream().map(Point::toString).collect(Collectors.joining())));
-                        }
-                        WeatherSummary.addWeather(newWth);
-                        points.clear();
-                    }
-                    planetRepository.saveAll(planets);
-                    log.info("TOTAL de array weather {}", weathers.size());
-                    weatherRepository.saveAll(weathers);
-                    WeatherSummary.printSummary();
-                } else {
-                    //TODO:CALCULAR SOLO UN DIA MAS
+            for (int i = 1; i <= daysToProcess; i++) {
+                dayWeather = java.sql.Date.valueOf(LocalDate.now().plusDays(i));
+                //Se guardan los movimientos de los planetas y se obtienen los puntos x e y de los mismos
+                for (Planet p : planets) {
+                    angulePosition = GeometryUtils.getAnguleByVelocityAndTimes(p.getLastPosition(),
+                            p.getAngularVelocity(), i);
+                    p.getMovements().add(new PlanetMovement(angulePosition, p, dayWeather));
+                    points.add(GeometryUtils.getCartesianCoordinatesFromPolar(p.getSunDistance(), angulePosition));
                 }
-            } else {
-                log.error("Falta Parametro de Inicializacion para calcular el clima");
+                //Se detemina el tipo de clima
+                if (rainWeatherCalculator.isRainWeather(points)) {
+                    //TODO: mejorar
+                    auxPerimeter = GeometryUtils.getPerimeterFromTriangle(points.get(0), points.get(1), points.get(2));
+                    if (maxPerimeter < auxPerimeter && maxPerimeter == 0) {
+                        maxPerimeter = auxPerimeter;
+                        newWth = new Weather(WeatherType.MAX_RAIN, dayWeather);
+                        weathers.add(newWth);
+                    } else if (maxPerimeter < auxPerimeter) {
+                        weathers.stream()
+                                .filter(wt -> wt.getWeatherType().equals(WeatherType.MAX_RAIN))
+                                .findAny()
+                                .orElse(null)
+                                .setWeatherType(WeatherType.RAIN);
+                        newWth = new Weather(WeatherType.MAX_RAIN, dayWeather);
+                        weathers.add(newWth);
+                    } else {
+                        newWth = new Weather(WeatherType.RAIN, dayWeather);
+                        weathers.add(newWth);
+                    }
+                } else if (droughtWeatherCalculator.isDroughtWeather(points)) {
+                    newWth = new Weather(WeatherType.DROUGHT, dayWeather);
+                    weathers.add(newWth);
+                } else if (pressAndTempWeatherCalculator.isPressureAndTempWeather(points)) {
+                    newWth = new Weather(WeatherType.PRESSURE_AND_TEMPERATURE, dayWeather);
+                    weathers.add(newWth);
+                } else {
+                    newWth = new Weather(WeatherType.NORMAL, dayWeather);
+                    weathers.add(newWth);
+                }
+                WeatherSummary.addWeather(newWth);
+                points.clear();
             }
+            planets.forEach(p -> p.setLastPosition(p.getMovements().get(p.getMovements().size() - 1).getPositionAngle()));
+            planetRepository.saveAll(planets);
+            log.info("TOTAL de array weather {}", weathers.size());
+            weatherRepository.saveAll(weathers);
+            WeatherSummary.printSummary();
+
         } catch (Exception e) {
             log.error("Ocurrio un Error ", e);
         } finally {
@@ -175,6 +162,20 @@ public class WeatherService {
             stopWatch.stop();
             log.info("****Clima calculado en {} segundos", stopWatch.getTotalTimeSeconds());
         }
+    }
+
+    private void cleanWeather(List<Planet> planets) {
+        weatherRepository.deleteAll();
+        planets.forEach(planet -> planet.getMovements().clear());
+    }
+
+
+    private static long getDaysToProcess(ConfigParam periodToProcess) {
+        return DateUtils.getDaysBetweenTodayAndOtherDate(getFuturePeriodDate(periodToProcess));
+    }
+
+    private static LocalDate getFuturePeriodDate(ConfigParam periodToProcess) {
+        return LocalDate.now().plusYears(Long.parseLong(periodToProcess.getValue()));
     }
 
 

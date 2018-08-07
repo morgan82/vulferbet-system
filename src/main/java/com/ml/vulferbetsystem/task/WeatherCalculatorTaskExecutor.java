@@ -18,20 +18,13 @@ public class WeatherCalculatorTaskExecutor {
     private WeatherService weatherService;
 
     @Scheduled(cron = "${tasks.weatherCalculator.cronExpression}")
-    public void scheduledExecute() throws Exception {
+    public void scheduledExecute() {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         log.info("*** Strat ***");
-        this.execute();
+        weatherService.calculateWeather();
         stopWatch.stop();
         log.info("*** Stop in: {} ***", stopWatch.getTotalTimeSeconds());
-    }
-
-
-    //private methods
-
-    private void execute() {
-        weatherService.calculateWeather();
     }
 
 }

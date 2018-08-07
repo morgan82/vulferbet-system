@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class RainWeatherTriangleCalculator implements RainWeatherCalculator {
     @Override
-    public boolean isRainWeather(List<Point> planetLocations, int days) {
+    public boolean isRainWeather(List<Point> planetLocations) {
         Point p1 = planetLocations.get(0);
         Point p2 = planetLocations.get(1);
         Point p3 = planetLocations.get(2);

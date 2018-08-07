@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class PressureAndTemperatureWeatherStraightCalculator implements PressureAndTemperatureWeatherCalculator {
     @Override
-    public boolean isPressureAndTempWeather(List<Point> planetLocations, int days) {
+    public boolean isPressureAndTempWeather(List<Point> planetLocations) {
         boolean belongToStraight = GeometryUtils.isBelongToStraight(planetLocations);
         boolean straightPassForOrigin = GeometryUtils.isStraightPassForOrigin(planetLocations.get(0), planetLocations.get(1));
 

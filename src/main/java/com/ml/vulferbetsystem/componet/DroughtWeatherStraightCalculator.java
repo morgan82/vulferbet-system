@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class DroughtWeatherStraightCalculator implements DroughtWeatherCalculator {
     @Override
-    public boolean isDroughtWeather(List<Point> planetLocations, int days) {
+    public boolean isDroughtWeather(List<Point> planetLocations) {
         boolean belongToStraight = GeometryUtils.isBelongToStraight(planetLocations);
         boolean straightPassForOrigin = GeometryUtils.isStraightPassForOrigin(planetLocations.get(0), planetLocations.get(1));
 

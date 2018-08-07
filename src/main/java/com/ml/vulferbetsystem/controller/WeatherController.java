@@ -1,7 +1,7 @@
 package com.ml.vulferbetsystem.controller;
 
-import com.ml.vulferbetsystem.service.WeatherService;
 import com.ml.vulferbetsystem.dto.WeatherDTO;
+import com.ml.vulferbetsystem.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

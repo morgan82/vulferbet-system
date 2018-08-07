@@ -30,6 +30,11 @@ public class WeatherRepositoryWrapper {
         return this.repository.saveAll(weathers);
     }
 
+    public void deleteAll() {
+        repository.deleteAll();
+    }
+
+    //getter and setter
     public boolean isBusy() {
         return busy;
     }

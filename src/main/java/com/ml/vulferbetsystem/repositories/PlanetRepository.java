@@ -1,7 +1,6 @@
 package com.ml.vulferbetsystem.repositories;
 
 import com.ml.vulferbetsystem.domain.Planet;
-import com.ml.vulferbetsystem.domain.Weather;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
