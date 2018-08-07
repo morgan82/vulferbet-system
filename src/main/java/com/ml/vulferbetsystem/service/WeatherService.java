@@ -19,6 +19,7 @@ import com.ml.vulferbetsystem.repositories.ConfigParamRepository;
 import com.ml.vulferbetsystem.repositories.PlanetMovementRepository;
 import com.ml.vulferbetsystem.repositories.PlanetRepository;
 import com.ml.vulferbetsystem.repositories.weather.WeatherRepositoryWrapper;
+import com.ml.vulferbetsystem.utils.DateUtils;
 import com.ml.vulferbetsystem.utils.GeometryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import javax.transaction.Transactional;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -98,7 +97,8 @@ public class WeatherService {
                     ConfigParam periodToProcess = configParamRepository.findByName(
                             ConfigParamConstants.PERIOD_TO_PROCESS_IN_YEARS.name());
 
-                    long daysToProcess = getTotalDaysToProcess(Integer.parseInt(periodToProcess.getValue()));
+                    LocalDate futurePeriodDate = LocalDate.now().plusYears(Long.parseLong(periodToProcess.getValue()));
+                    long daysToProcess = DateUtils.getDaysBetweenTodayAndOtherDate(futurePeriodDate);
                     log.info("Total days to process {} ", daysToProcess);
 
                     List<Planet> planets = planetRepository.findAll();
@@ -110,7 +110,7 @@ public class WeatherService {
                     java.util.Date dayWeather;
                     double maxPerimeter = 0;
                     double auxPerimeter;
-                    Weather w;
+                    Weather newWth;
 
                     for (int i = 1; i <= daysToProcess; i++) {
                         dayWeather = java.sql.Date.valueOf(LocalDate.now().plusDays(i));
@@ -126,41 +126,41 @@ public class WeatherService {
                             auxPerimeter = GeometryUtils.getPerimeterFromTriangle(points.get(0), points.get(1), points.get(2));
                             if (maxPerimeter < auxPerimeter && maxPerimeter == 0) {
                                 maxPerimeter = auxPerimeter;
-                                w = new Weather(WeatherType.MAX_RAIN, dayWeather);
-                                weathers.add(w);
+                                newWth = new Weather(WeatherType.MAX_RAIN, dayWeather);
+                                weathers.add(newWth);
                             } else if (maxPerimeter < auxPerimeter) {
                                 weathers.stream()
-                                        .filter(w -> w.getWeatherType().equals(WeatherType.MAX_RAIN))
+                                        .filter(wt -> wt.getWeatherType().equals(WeatherType.MAX_RAIN))
                                         .findAny()
                                         .orElse(null)
                                         .setWeatherType(WeatherType.RAIN);
-                                w = new Weather(WeatherType.MAX_RAIN, dayWeather);
-                                weathers.add(w);
+                                newWth = new Weather(WeatherType.MAX_RAIN, dayWeather);
+                                weathers.add(newWth);
                             } else {
-                                w = new Weather(WeatherType.RAIN, dayWeather);
-                                weathers.add(w);
-                                WeatherSummary.addWeather(w);
+                                newWth = new Weather(WeatherType.RAIN, dayWeather);
+                                weathers.add(newWth);
                             }
 //                            log.info("\n" + WeatherType.RAIN + "-> " + "\n dayWeather-> " + dayWeather + points.stream().map(Point::toString).collect(Collectors.joining("\n", "\n", "\n")));
                         } else if (droughtWeatherCalculator.isDroughtWeather(points, i)) {
-                            w = new Weather(WeatherType.DROUGHT, dayWeather);
-                            weathers.add(w);
+                            newWth = new Weather(WeatherType.DROUGHT, dayWeather);
+                            weathers.add(newWth);
 //                            log.info("\n" + WeatherType.DROUGHT + "-> " + "\n dayWeather-> " + dayWeather + points.stream().map(Point::toString).collect(Collectors.joining("\n", "\n", "\n")));
                         } else if (pressAndTempWeatherCalculator.isPressureAndTempWeather(points, i)) {
-                            w = new Weather(WeatherType.PRESSURE_AND_TEMPERATURE, dayWeather);
-                            weathers.add(w);
+                            newWth = new Weather(WeatherType.PRESSURE_AND_TEMPERATURE, dayWeather);
+                            weathers.add(newWth);
 //                            log.info("\n" + WeatherType.PRESSURE_AND_TEMPERATURE + "-> " + "\n dayWeather-> " + dayWeather + points.stream().map(Point::toString).collect(Collectors.joining("\n", "\n", "\n")));
                         } else {
-                            w = new Weather(WeatherType.NORMAL, dayWeather);
-                            weathers.add(w);
+                            newWth = new Weather(WeatherType.NORMAL, dayWeather);
+                            weathers.add(newWth);
 //                            log.info((WeatherType.NORMAL + "-> " + points.stream().map(Point::toString).collect(Collectors.joining())));
                         }
-                        WeatherSummary.addWeather(w);
+                        WeatherSummary.addWeather(newWth);
                         points.clear();
                     }
                     planetRepository.saveAll(planets);
+                    log.info("TOTAL de array weather {}", weathers.size());
                     weatherRepository.saveAll(weathers);
-                    printWeatherSummary(weathers);
+                    WeatherSummary.printSummary();
                 } else {
                     //TODO:CALCULAR SOLO UN DIA MAS
                 }
@@ -175,18 +175,6 @@ public class WeatherService {
             stopWatch.stop();
             log.info("****Clima calculado en {} segundos", stopWatch.getTotalTimeSeconds());
         }
-    }
-
-    private static void printWeatherSummary(List<Weather> weathers) {
-
-    }
-
-    private long getTotalDaysToProcess(int years) {
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime maxTimeToProcess = today.plusYears(years);
-        Duration duration = Duration.between(today, maxTimeToProcess);
-
-        return Math.abs(duration.toDays());
     }
 
 

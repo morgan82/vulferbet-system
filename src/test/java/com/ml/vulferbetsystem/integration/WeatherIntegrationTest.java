@@ -4,6 +4,7 @@ import com.ml.vulferbetsystem.domain.WeatherType;
 import com.ml.vulferbetsystem.dto.WeatherDTO;
 import com.ml.vulferbetsystem.error.ErrorMessage;
 import com.ml.vulferbetsystem.error.ErrorType;
+import com.ml.vulferbetsystem.service.WeatherService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class WeatherIntegrationTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
+
+    @Autowired
+    private WeatherService weatherService;
 
     @Test
     public void weatherControllerHelloWordOk() {

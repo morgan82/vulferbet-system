@@ -8,6 +8,7 @@ public class WeatherDTO {
     private int day;
     private WeatherType weather;
     private List<PlanetDTO> planets;
+    private String prettyFormat;
 
     public WeatherDTO() {
     }
@@ -21,9 +22,17 @@ public class WeatherDTO {
         this.day = day;
         this.weather = weather;
         this.planets = planets;
+        this.prettyFormat = "(" + planets.get(0).getPosition().getX() + "," + planets.get(0).getPosition().getY() + ")"
+                + "(" + planets.get(1).getPosition().getX() + "," + planets.get(1).getPosition().getY() + ")"
+                + "(" + planets.get(2).getPosition().getX() + "," + planets.get(2).getPosition().getY() + ")";
     }
 
     //getters and setters
+
+    public String getPrettyFormat() {
+        return prettyFormat;
+    }
+
     public int getDay() {
         return day;
     }

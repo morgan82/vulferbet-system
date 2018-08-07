@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -15,8 +16,8 @@ import java.util.Date;
 public class Weather {
 
     @Id
-    @SequenceGenerator(name="whather_generator",sequenceName="WEATHER_SEQ")
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator="whather_generator")
+    @SequenceGenerator(name = "whather_generator", sequenceName = "WEATHER_SEQ")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "whather_generator")
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -50,8 +51,8 @@ public class Weather {
         this.weatherType = weatherType;
     }
 
-    public Date getWeatherDate() {
-        return weatherDate;
+    public LocalDate getWeatherDate() {
+        return ((java.sql.Date) weatherDate).toLocalDate();
     }
 
     public void setWeatherDate(Date weatherDate) {
