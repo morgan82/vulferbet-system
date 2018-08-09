@@ -27,7 +27,7 @@ public class Planet {
 
     private int angularVelocity;
 
-    private int lastPosition;
+    private int initialPosition;
 
     @OneToMany(mappedBy = "planet", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PlanetMovement> movements = new ArrayList<>();
@@ -65,12 +65,12 @@ public class Planet {
         this.angularVelocity = angularVelocity;
     }
 
-    public int getLastPosition() {
-        return lastPosition;
+    public int getInitialPosition() {
+        return initialPosition;
     }
 
-    public void setLastPosition(int lastPosition) {
-        this.lastPosition = lastPosition;
+    public void setInitialPosition(int initialPosition) {
+        this.initialPosition = initialPosition;
     }
 
     public List<PlanetMovement> getMovements() {
