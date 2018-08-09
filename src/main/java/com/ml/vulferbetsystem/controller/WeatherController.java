@@ -25,4 +25,5 @@ public class WeatherController {
 //        return weatherService.getWeatherByDay(day);
         return weatherService.getWeatherAndPlanetByDay(day);
     }
+
 }

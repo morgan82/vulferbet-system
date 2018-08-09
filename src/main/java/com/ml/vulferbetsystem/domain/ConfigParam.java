@@ -12,8 +12,8 @@ import javax.persistence.Table;
 public class ConfigParam {
 
     @Id
-    @SequenceGenerator(name="config_param_generator",sequenceName="CONFIG_PARAM_SEQ")
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator="config_param_generator")
+    @SequenceGenerator(name = "config_param_generator", sequenceName = "CONFIG_PARAM_SEQ")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "config_param_generator")
     private Long id;
     private String name;
     private String value;
