@@ -1,6 +1,6 @@
 package com.ml.vulferbetsystem.controller;
 
-import com.ml.vulferbetsystem.dto.WeatherDTO;
+import com.ml.vulferbetsystem.dto.WeatherAndPlanetDTO;
 import com.ml.vulferbetsystem.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,7 +20,7 @@ public class WeatherController {
     }
 
     @GetMapping(value = "/weather", produces = MediaType.APPLICATION_JSON_VALUE)
-    public WeatherDTO getWeatherByDay(@RequestParam(value = "day") int day) {
+    public WeatherAndPlanetDTO getWeatherByDay(@RequestParam(value = "day") int day) {
 
 //        return weatherService.getWeatherByDay(day);
         return weatherService.getWeatherAndPlanetByDay(day);

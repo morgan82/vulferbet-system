@@ -2,13 +2,9 @@ package com.ml.vulferbetsystem.dto;
 
 import com.ml.vulferbetsystem.domain.WeatherType;
 
-import java.util.List;
-
 public class WeatherDTO {
     private int day;
     private WeatherType weather;
-    private List<PlanetDTO> planets;
-    private String prettyFormat;
 
     public WeatherDTO() {
     }
@@ -18,20 +14,7 @@ public class WeatherDTO {
         this.weather = weather;
     }
 
-    public WeatherDTO(int day, WeatherType weather, List<PlanetDTO> planets) {
-        this.day = day;
-        this.weather = weather;
-        this.planets = planets;
-        this.prettyFormat = "(" + planets.get(0).getPosition().getX() + "," + planets.get(0).getPosition().getY() + ")"
-                + "(" + planets.get(1).getPosition().getX() + "," + planets.get(1).getPosition().getY() + ")"
-                + "(" + planets.get(2).getPosition().getX() + "," + planets.get(2).getPosition().getY() + ")";
-    }
-
     //getters and setters
-
-    public String getPrettyFormat() {
-        return prettyFormat;
-    }
 
     public int getDay() {
         return day;
@@ -47,13 +30,5 @@ public class WeatherDTO {
 
     public void setWeather(WeatherType weather) {
         this.weather = weather;
-    }
-
-    public List<PlanetDTO> getPlanets() {
-        return planets;
-    }
-
-    public void setPlanets(List<PlanetDTO> planets) {
-        this.planets = planets;
     }
 }

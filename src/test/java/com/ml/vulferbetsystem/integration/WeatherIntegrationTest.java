@@ -29,8 +29,6 @@ public class WeatherIntegrationTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
-    @Autowired
-    private WeatherService weatherService;
 
     @Test
     public void weatherControllerHelloWordOk() {

@@ -12,6 +12,7 @@ import com.ml.vulferbetsystem.domain.Weather;
 import com.ml.vulferbetsystem.domain.WeatherSummary;
 import com.ml.vulferbetsystem.domain.WeatherType;
 import com.ml.vulferbetsystem.dto.PlanetDTO;
+import com.ml.vulferbetsystem.dto.WeatherAndPlanetDTO;
 import com.ml.vulferbetsystem.dto.WeatherDTO;
 import com.ml.vulferbetsystem.error.ErrorType;
 import com.ml.vulferbetsystem.error.StatusCodeException;
@@ -57,6 +58,12 @@ public class WeatherService {
     @Qualifier("pressureAndTemperatureWeatherStraightCalculator")
     private PressureAndTemperatureWeatherCalculator pressAndTempWeatherCalculator;
 
+    /**
+     * Busca el clima y la posicion de los planetas dado un dia x
+     *
+     * @param days
+     * @return
+     */
     public WeatherDTO getWeatherByDay(int days) {
 
         Weather byWeatherDate = weatherRepository.findByWeatherDate(days);
@@ -67,7 +74,13 @@ public class WeatherService {
         }
     }
 
-    public WeatherDTO getWeatherAndPlanetByDay(int days) {
+    /**
+     * Busca el clima y la posicion de los planetas dado un dia x
+     *
+     * @param days
+     * @return clima y posicion de planetas
+     */
+    public WeatherAndPlanetDTO getWeatherAndPlanetByDay(int days) {
 
         Weather byWeatherDate = weatherRepository.findByWeatherDate(days);
         if (byWeatherDate == null) {
@@ -77,29 +90,30 @@ public class WeatherService {
             List<PlanetDTO> planetsDTO = planetPositions.stream().map(pp -> new PlanetDTO(pp.getPlanet().getName(),
                     GeometryUtils.getCartesianCoordinatesFromPolar(pp.getPlanet().getSunDistance(), pp.getPositionAngle())))
                     .collect(Collectors.toList());
-            return new WeatherDTO(days, byWeatherDate.getWeatherType(), planetsDTO);
+            return new WeatherAndPlanetDTO(days, byWeatherDate.getWeatherType(), planetsDTO);
         }
     }
 
+    /**
+     * Calcula el clima para todos los dias de un periodo de tiempo dado en años
+     * y tambien calcula por dia los movimientos de los planetas involucrados
+     */
     @Transactional
     public void calculateWeather() {
-        weatherRepository.setBusy(true);
         StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         try {
+            weatherRepository.setBusy(true);
+
             log.info("****Calculando el clima");
-            stopWatch.start();
             List<Planet> planets = planetRepository.findAll();
             cleanWeather(planets);
-            ConfigParam periodToProcess = configParamRepository.findByName(
-                    ConfigParamConstants.PERIOD_TO_PROCESS_IN_YEARS.name());
-            long daysToProcess = getDaysToProcess(periodToProcess);
 
+            long daysToProcess = getDaysToProcess();
             log.info("Total days to process {} ", daysToProcess);
 
             List<Point> points = new ArrayList<>();
-
             int angulePosition;
-
             List<Weather> weathers = new ArrayList<>();
             java.util.Date dayWeather;
             double maxPerimeter = 0;
@@ -148,7 +162,7 @@ public class WeatherService {
                 WeatherSummary.addWeather(newWth);
                 points.clear();
             }
-            planets.forEach(p -> p.setLastPosition(p.getMovements().get(p.getMovements().size() - 1).getPositionAngle()));
+            updateLastPositionOfPlanets(planets);
             planetRepository.saveAll(planets);
             log.info("TOTAL de array weather {}", weathers.size());
             weatherRepository.saveAll(weathers);
@@ -164,18 +178,25 @@ public class WeatherService {
         }
     }
 
-    private void cleanWeather(List<Planet> planets) {
-        weatherRepository.deleteAll();
-        planets.forEach(planet -> planet.getMovements().clear());
-    }
-
-
-    private static long getDaysToProcess(ConfigParam periodToProcess) {
-        return DateUtils.getDaysBetweenTodayAndOtherDate(getFuturePeriodDate(periodToProcess));
+    //private methods
+    private static void updateLastPositionOfPlanets(List<Planet> planets) {
+        planets.forEach(p -> p.setLastPosition(p.getMovements().get(p.getMovements().size() - 1).getPositionAngle()));
     }
 
     private static LocalDate getFuturePeriodDate(ConfigParam periodToProcess) {
         return LocalDate.now().plusYears(Long.parseLong(periodToProcess.getValue()));
+    }
+
+    private long getDaysToProcess() {
+        ConfigParam periodToProcess = configParamRepository.findByName(
+                ConfigParamConstants.PERIOD_TO_PROCESS_IN_YEARS.name());
+
+        return DateUtils.getDaysBetweenTodayAndOtherDate(getFuturePeriodDate(periodToProcess));
+    }
+
+    private void cleanWeather(List<Planet> planets) {
+        weatherRepository.deleteAll();
+        planets.forEach(planet -> planet.getMovements().clear());
     }
 
 

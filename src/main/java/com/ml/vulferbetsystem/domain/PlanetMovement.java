@@ -1,5 +1,6 @@
 package com.ml.vulferbetsystem.domain;
 
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Entity
@@ -24,7 +27,7 @@ public class PlanetMovement {
     private Planet planet;
 
     private int positionAngle;
-
+    @Temporal(TemporalType.DATE)
     private Date positionDate;
 
     public PlanetMovement(int positionAngle, Planet planet, Date positionDate) {

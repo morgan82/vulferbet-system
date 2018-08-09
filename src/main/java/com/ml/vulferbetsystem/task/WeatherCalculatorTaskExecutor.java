@@ -21,10 +21,15 @@ public class WeatherCalculatorTaskExecutor {
     public void scheduledExecute() {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        log.info("*** Strat ***");
-        weatherService.calculateWeather();
-        stopWatch.stop();
-        log.info("*** Stop in: {} ***", stopWatch.getTotalTimeSeconds());
+        try {
+            log.info("*** Strat ***");
+            weatherService.calculateWeather();
+        } catch (Exception e) {
+            log.error("Ocurrio un error al ejecutar el job ",e);
+        }finally {
+            stopWatch.stop();
+            log.info("*** Stop in: {} in seconds***", stopWatch.getTotalTimeSeconds());
+        }
     }
 
 }
