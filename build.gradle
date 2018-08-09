@@ -29,7 +29,7 @@ dependencies {
     compile('commons-configuration:commons-configuration:1.6')
     compile ('org.postgresql:postgresql:42.2.2')
 
-    compile files('lib/ojdbc6-11.2.0.3.jar')
+    compile files('lib/ojdbc6-11.2.0.3.jar')  
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('com.h2database:h2')
