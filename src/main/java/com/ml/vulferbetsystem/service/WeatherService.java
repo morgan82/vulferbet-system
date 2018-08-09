@@ -124,7 +124,7 @@ public class WeatherService {
                 dayWeather = java.sql.Date.valueOf(LocalDate.now().plusDays(i));
                 //Se guardan los movimientos de los planetas y se obtienen los puntos x e y de los mismos
                 for (Planet p : planets) {
-                    angulePosition = GeometryUtils.getAnguleByVelocityAndTimes(p.getLastPosition(),
+                    angulePosition = GeometryUtils.getAnguleByVelocityAndTimes(p.getInitialPosition(),
                             p.getAngularVelocity(), i);
                     p.getMovements().add(new PlanetMovement(angulePosition, p, dayWeather));
                     points.add(GeometryUtils.getCartesianCoordinatesFromPolar(p.getSunDistance(), angulePosition));
@@ -162,7 +162,7 @@ public class WeatherService {
                 WeatherSummary.addWeather(newWth);
                 points.clear();
             }
-            updateLastPositionOfPlanets(planets);
+            updateInitialPositionOfPlanets(planets);
             planetRepository.saveAll(planets);
             log.info("TOTAL de array weather {}", weathers.size());
             weatherRepository.saveAll(weathers);
@@ -179,8 +179,8 @@ public class WeatherService {
     }
 
     //private methods
-    private static void updateLastPositionOfPlanets(List<Planet> planets) {
-        planets.forEach(p -> p.setLastPosition(p.getMovements().get(p.getMovements().size() - 1).getPositionAngle()));
+    private static void updateInitialPositionOfPlanets(List<Planet> planets) {
+        planets.forEach(p -> p.setInitialPosition(p.getMovements().get(0).getPositionAngle()));
     }
 
     private static LocalDate getFuturePeriodDate(ConfigParam periodToProcess) {
