@@ -1,5 +1,4 @@
 
-management.server.port: 8081
 spring.profiles.active: heroku
 #spring.jpa.hibernate.ddl-auto=create-drop
 spring.jpa.hibernate.ddl-auto: create

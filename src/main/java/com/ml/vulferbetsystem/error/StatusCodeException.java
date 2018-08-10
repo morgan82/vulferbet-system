@@ -1,10 +1,10 @@
 package com.ml.vulferbetsystem.error;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpStatusCodeException;
 
-public class StatusCodeException extends HttpStatusCodeException {
+public class StatusCodeException extends RuntimeException {
     private Exception exception;
+    private HttpStatus statusCode;
 
     /**
      * Constructor que almacena la excepción originaria.
@@ -12,7 +12,7 @@ public class StatusCodeException extends HttpStatusCodeException {
      * @param e          Excepcion originaria.
      */
     public StatusCodeException(HttpStatus statusCode, Exception e) {
-        super(statusCode);
+        this.statusCode = statusCode;
         this.exception = e;
     }
     /**
@@ -20,7 +20,16 @@ public class StatusCodeException extends HttpStatusCodeException {
      * @param statusCode Código HTTP a devolver.
      */
     public StatusCodeException(HttpStatus statusCode,String message) {
-        super(statusCode,message);
+        super(message);
+        this.statusCode = statusCode;
         this.exception = null;
+    }
+
+    public String getStatusText() {
+        return this.getMessage();
+    }
+
+    public HttpStatus getStatusCode() {
+        return statusCode;
     }
 }
