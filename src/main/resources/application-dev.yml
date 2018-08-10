@@ -1,3 +1,4 @@
+root.index.url: http://localhost:8080/weather?day=1, http://localhost:8080/weather-full?day=1
 
 spring.jpa.hibernate.ddl-auto: create
 spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.Oracle10gDialect

@@ -1,3 +1,6 @@
+root.index.url: https://vulferbet-system.herokuapp.com/weather?day=1, https://vulferbet-system.herokuapp.com/weather-full?day=1
+
+
 spring.jpa.hibernate.ddl-auto: create
 spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 
