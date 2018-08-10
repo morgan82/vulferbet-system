@@ -1,6 +1,5 @@
-package com.ml.vulferbetsystem.task;
+package com.ml.vulferbetsystem.cron;
 
-import com.ml.vulferbetsystem.service.WeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,25 +9,23 @@ import org.springframework.util.StopWatch;
 
 
 @Service
-public class WeatherCalculatorTaskExecutor {
-    private static final Logger log = LoggerFactory.getLogger(WeatherCalculatorTaskExecutor.class);
-
-
+public class WeatherCalculatorScheduledExecutor {
+    private static final Logger log = LoggerFactory.getLogger(WeatherCalculatorScheduledExecutor.class);
     @Autowired
-    private WeatherService weatherService;
+    private ProcessingWeatherTask task;
 
     @Scheduled(cron = "${tasks.weatherCalculator.cronExpression}")
     public void scheduledExecute() {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
-            log.info("*** Strat ***");
-            weatherService.calculateWeather();
+            log.info("--- Strat in schedule---");
+            task.processingWeather();
         } catch (Exception e) {
-            log.error("Ocurrio un error al ejecutar el job ",e);
-        }finally {
+            log.error("Ocurrio un error al ejecutar el job in schedule", e);
+        } finally {
             stopWatch.stop();
-            log.info("*** Stop in: {} in seconds***", stopWatch.getTotalTimeSeconds());
+            log.info("--- Stop in: {} seconds in schedule---", stopWatch.getTotalTimeSeconds());
         }
     }
 

@@ -27,11 +27,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,21 +59,23 @@ public class WeatherService {
     private PressureAndTemperatureWeatherCalculator pressAndTempWeatherCalculator;
 
     /**
-     * Busca el clima y la posicion de los planetas dado un dia x
+     * Busca el clima dado un dia x
      *
      * @param days
-     * @return
+     * @return clima
      */
-    @Async
+
     public WeatherDTO getWeatherByDay(int days) {
-
-        Weather byWeatherDate = weatherRepository.findByWeatherDate(days);
-        if (byWeatherDate == null) {
-            throw new StatusCodeException(HttpStatus.NOT_FOUND, ErrorType.WEATHER_NOT_FOUND);
+        if (isProcessing()) {
+            throw new StatusCodeException(HttpStatus.CONFLICT, ErrorType.PROCESSING_WEATHER);
         } else {
-            return new WeatherDTO(days, byWeatherDate.getWeatherType());
+            Weather byWeatherDate = weatherRepository.findByWeatherDate(days);
+            if (byWeatherDate == null) {
+                throw new StatusCodeException(HttpStatus.NOT_FOUND, ErrorType.WEATHER_NOT_FOUND);
+            } else {
+                return new WeatherDTO(days, byWeatherDate.getWeatherType());
+            }
         }
-
     }
 
     /**
@@ -83,11 +84,9 @@ public class WeatherService {
      * @param days
      * @return clima y posicion de planetas
      */
-    @Transactional
     public WeatherAndPlanetDTO getWeatherAndPlanetByDay(int days) {
         if (isProcessing()) {
-            //TODO:Nunca entra
-            throw new StatusCodeException(HttpStatus.PROCESSING, ErrorType.PROCESSING_WEATHER);
+            throw new StatusCodeException(HttpStatus.CONFLICT, ErrorType.PROCESSING_WEATHER);
         } else {
             Weather byWeatherDate = weatherRepository.findByWeatherDate(days);
             if (byWeatherDate == null) {
@@ -107,13 +106,13 @@ public class WeatherService {
      * y tambien calcula por dia los movimientos de los planetas involucrados
      */
     @Transactional
-    public void calculateWeather() {
+    public void processWeather() {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
-            log.info("****Calculando el clima");
+            log.info("processing weather");
 
-            setProcessing(true);
+//            setProcessing(true);
             List<Planet> planets = planetRepository.findAll();
             cleanWeather(planets);
 
@@ -177,12 +176,11 @@ public class WeatherService {
             WeatherSummary.printSummary();
 
         } catch (Exception e) {
-            log.error("Ocurrio un Error ", e);
+            log.error("Erro processing weather", e);
         } finally {
-            setProcessing(false);
             WeatherSummary.clearValues();
             stopWatch.stop();
-            log.info("****Clima calculado en {} segundos", stopWatch.getTotalTimeSeconds());
+            log.info("Weather processing in {} seconds", stopWatch.getTotalTimeSeconds());
         }
     }
 
@@ -202,14 +200,6 @@ public class WeatherService {
         return DateUtils.getDaysBetweenTodayAndOtherDate(getFuturePeriodDate(periodToProcess));
     }
 
-    private void setProcessing(Boolean flag) {
-        ConfigParam isProcessing = configParamRepository.findByNameForUpdate(
-                ConfigParamConstants.IS_PROCESS_WEATHER.name());
-
-        isProcessing.setValue(flag.toString());
-        configParamRepository.save(isProcessing);
-    }
-
     private Boolean isProcessing() {
         ConfigParam isProcessing = configParamRepository.findByNameLock(
                 ConfigParamConstants.IS_PROCESS_WEATHER.name());
@@ -222,6 +212,5 @@ public class WeatherService {
         weatherRepository.deleteAll();
         planets.forEach(planet -> planet.getMovements().clear());
     }
-
 
 }
