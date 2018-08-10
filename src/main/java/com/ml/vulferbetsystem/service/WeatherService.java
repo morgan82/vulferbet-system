@@ -1,8 +1,5 @@
 package com.ml.vulferbetsystem.service;
 
-import com.ml.vulferbetsystem.componet.DroughtWeatherCalculator;
-import com.ml.vulferbetsystem.componet.PressureAndTemperatureWeatherCalculator;
-import com.ml.vulferbetsystem.componet.RainWeatherCalculator;
 import com.ml.vulferbetsystem.domain.ConfigParam;
 import com.ml.vulferbetsystem.domain.ConfigParamConstants;
 import com.ml.vulferbetsystem.domain.Planet;
@@ -49,14 +46,14 @@ public class WeatherService {
     @Autowired
     private PlanetMovementRepository planetMovementRepository;
     @Autowired
-    @Qualifier("rainWeatherTriangleCalculator")
-    private RainWeatherCalculator rainWeatherCalculator;
+    @Qualifier("rainWeatherTriangleProcessor")
+    private RainWeatherProcessor rainWeatherProcessor;
     @Autowired
-    @Qualifier("droughtWeatherStraightCalculator")
-    private DroughtWeatherCalculator droughtWeatherCalculator;
+    @Qualifier("droughtWeatherStraightProcessor")
+    private DroughtWeatherProcessor droughtWeatherProcessor;
     @Autowired
-    @Qualifier("pressureAndTemperatureWeatherStraightCalculator")
-    private PressureAndTemperatureWeatherCalculator pressAndTempWeatherCalculator;
+    @Qualifier("pressureAndTemperatureWeatherStraightProcessor")
+    private PressureAndTemperatureWeatherProcessor pressAndTempWeatherCalculator;
 
     /**
      * Busca el clima dado un dia x
@@ -137,7 +134,7 @@ public class WeatherService {
                     points.add(GeometryUtils.getCartesianCoordinatesFromPolar(p.getSunDistance(), angulePosition));
                 }
                 //Se detemina el tipo de clima
-                if (rainWeatherCalculator.isRainWeather(points)) {
+                if (rainWeatherProcessor.isRainWeather(points)) {
                     //TODO: mejorar
                     auxPerimeter = GeometryUtils.getPerimeterFromTriangle(points.get(0), points.get(1), points.get(2));
                     if (maxPerimeter < auxPerimeter && maxPerimeter == 0) {
@@ -156,7 +153,7 @@ public class WeatherService {
                         newWth = new Weather(WeatherType.RAIN, dayWeather);
                         weathers.add(newWth);
                     }
-                } else if (droughtWeatherCalculator.isDroughtWeather(points)) {
+                } else if (droughtWeatherProcessor.isDroughtWeather(points)) {
                     newWth = new Weather(WeatherType.DROUGHT, dayWeather);
                     weathers.add(newWth);
                 } else if (pressAndTempWeatherCalculator.isPressureAndTempWeather(points)) {
