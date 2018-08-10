@@ -26,13 +26,13 @@ public class WeatherCalculatorScheduledExecutor {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
-            log.info("--- Strat in schedule---");
+            log.info("--- Strat in scheduler---");
             task.processingWeather();
         } catch (Exception e) {
             log.error("Ocurrio un error al ejecutar el job in schedule", e);
         } finally {
             stopWatch.stop();
-            log.info("--- Stop in: {} seconds in schedule---", stopWatch.getTotalTimeSeconds());
+            log.info("--- Stop in: {} seconds in scheduler---", stopWatch.getTotalTimeSeconds());
         }
     }
 
