@@ -35,8 +35,10 @@ public class GlobalHandlerError {
 
     @ExceptionHandler(StatusCodeException.class)
     public ResponseEntity<ErrorMessage> handleStatusCodeException(StatusCodeException e) {
-        log.error("{} in advice ", e.getStatusCode());
-        log.error("", e);
+        if (!e.getStatusText().equalsIgnoreCase(ErrorType.PROCESSING_WEATHER)) {
+            log.error("{} in advice ", e.getStatusCode());
+            log.error("", e);
+        }
         return new ResponseEntity<>(new ErrorMessage(e.getStatusText()), e.getStatusCode());
     }
 
