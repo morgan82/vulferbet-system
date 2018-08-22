@@ -4,7 +4,7 @@ http.port: 2223
 tasks.weatherCalculator.cronExpression: 0 0 0 * * ?
 
 #utils
-utils.geometry.precision: 0
+utils.geometry.precision: 61
 
 spring:
   h2:
