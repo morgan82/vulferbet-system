@@ -137,7 +137,7 @@ public class WeatherService {
                 if (rainWeatherProcessor.isRainWeather(points)) {
                     //TODO: mejorar
                     auxPerimeter = GeometryUtils.getPerimeterFromTriangle(points.get(0), points.get(1), points.get(2));
-                    if (maxPerimeter < auxPerimeter && maxPerimeter == 0) {
+                    if (maxPerimeter == 0) {//primera vez
                         maxPerimeter = auxPerimeter;
                         newWth = new Weather(WeatherType.MAX_RAIN, dayWeather);
                         weathers.add(newWth);
