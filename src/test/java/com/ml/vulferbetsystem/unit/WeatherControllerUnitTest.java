@@ -1,6 +1,7 @@
 package com.ml.vulferbetsystem.unit;
 
 import com.ml.vulferbetsystem.controller.WeatherController;
+import com.ml.vulferbetsystem.cron.ProcessingWeatherTask;
 import com.ml.vulferbetsystem.service.WeatherService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,8 @@ public class WeatherControllerUnitTest {
     private MockMvc mockMvc;
     @MockBean
     private WeatherService weatherService;
+    @MockBean
+    private ProcessingWeatherTask task;
 
     @Test
     public void weatherControllerGetWeatherWhitoutParamDay() throws Exception {
