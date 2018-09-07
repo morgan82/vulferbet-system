@@ -21,7 +21,7 @@ public class WeatherCalculatorScheduledExecutor {
         scheduledExecute();
     }
 
-//    @Scheduled(cron = "${tasks.weatherCalculator.cronExpression}")
+    @Scheduled(cron = "${tasks.weatherCalculator.cronExpression}")
     public void scheduledExecute() {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
