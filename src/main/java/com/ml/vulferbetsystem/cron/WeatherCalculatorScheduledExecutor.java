@@ -7,19 +7,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import javax.annotation.PostConstruct;
-
 
 @Service
 public class WeatherCalculatorScheduledExecutor {
     private static final Logger log = LoggerFactory.getLogger(WeatherCalculatorScheduledExecutor.class);
     @Autowired
     private ProcessingWeatherTask task;
-
-    @PostConstruct
-    public void onStartup() {
-        scheduledExecute();
-    }
 
     @Scheduled(cron = "${tasks.weatherCalculator.cronExpression}")
     public void scheduledExecute() {
