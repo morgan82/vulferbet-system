@@ -40,13 +40,7 @@ public class GeometryUtilsTest {
                         new Point(0.6, 1.5),
                         new Point(-2, -5)));
         then(belong).isTrue();
-//      (449.40,219.19), (-415.82,-1956.30), (642.79,766.04)
-        belong = GeometryUtils.isBelongToStraight(
-                Arrays.asList(
-                        new Point(449.40, 219.19),
-                        new Point(-415.82, -1956.30),
-                        new Point(642.79, 766.04)));
-        then(belong).isTrue();
+
         //X constante
         belong = GeometryUtils.isBelongToStraight(
                 Arrays.asList(new Point(3, 0),
