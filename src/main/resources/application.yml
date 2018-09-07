@@ -4,7 +4,7 @@ spring.profiles.active: heroku
 spring.jpa.hibernate.ddl-auto: create
 
 #cron/job
-tasks.weatherCalculator.cronExpression: 0 0 0 * * ?
+tasks.weatherCalculator.cronExpression: 0 0 0/1 * * ?
 
 #utils
 utils.geometry.precision: 48
