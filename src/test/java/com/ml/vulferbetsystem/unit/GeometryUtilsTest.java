@@ -21,7 +21,7 @@ public class GeometryUtilsTest {
         then(GeometryUtils.round(perimeterFromTriangle,3)).isEqualTo(10.797);
     }
     @Test
-    public void calculatePendingStraightOK() throws Exception {
+    public void calculatePendingStraightOK() {
 
         boolean belong = GeometryUtils.isBelongToStraight(
                 Arrays.asList(
