@@ -19,6 +19,8 @@ public interface ConfigParamRepository extends JpaRepository<ConfigParam, Long> 
 
     ConfigParam findByName(String name);
 
+    //    @Query(value = "SELECT cp FROM ConfigParam cp WHERE cp.name  = ?1")
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(value = "SELECT cp FROM ConfigParam cp WHERE cp.name  = ?1")
     @Transactional
     ConfigParam findByNameForUpdate(String name);
