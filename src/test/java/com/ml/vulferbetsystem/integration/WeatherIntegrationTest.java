@@ -30,6 +30,13 @@ public class WeatherIntegrationTest {
 
 
     @Test
+    public void weatherControllerHelloWordOk() {
+        ResponseEntity<String> result = this.testRestTemplate.getForEntity(
+                "http://localhost:" + this.port + "/hello-world", String.class);
+        then(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
     public void weatherControllerGetWeatherOK() {
         ResponseEntity<WeatherDTO> result = this.testRestTemplate.getForEntity(
                 "http://localhost:" + this.port + "/weather?day=123", WeatherDTO.class);
