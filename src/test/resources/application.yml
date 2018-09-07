@@ -1,12 +1,10 @@
-
-
-root.index.url: http://localhost:8080/weather?day=1, http://localhost:8080/weather-full?day=1
+http.port: 2223
 
 #cron/job
 tasks.weatherCalculator.cronExpression: 0 0 0 * * ?
 
 #utils
-utils.geometry.precision: 0
+utils.geometry.precision: 61
 
 spring:
   h2:
