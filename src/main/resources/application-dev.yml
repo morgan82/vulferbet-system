@@ -14,3 +14,7 @@ spring.datasource.url: jdbc:oracle:thin:@localhost:49161/XE
 spring.datasource.username: vulferbet
 spring.datasource.password: vulferbet
 spring.datasource.driver.class: oracle.jdbc.driver.OracleDriver
+
+
+#cron/job
+tasks.weatherCalculator.cronExpression: 0 0/2 * * * ?
