@@ -1,6 +1,5 @@
 package com.ml.vulferbetsystem.cron;
 
-import com.ml.vulferbetsystem.domain.ConfigParam;
 import com.ml.vulferbetsystem.domain.ConfigParamConstants;
 import com.ml.vulferbetsystem.repositories.ConfigParamRepository;
 import com.ml.vulferbetsystem.service.WeatherService;
@@ -37,10 +36,6 @@ public class ProcessingWeatherTask {
     }
 
     public void setProcessing(Boolean flag) {
-        ConfigParam isProcessing = configParamRepository.findByName(
-                ConfigParamConstants.IS_PROCESS_WEATHER.name());
-
-        isProcessing.setValue(flag.toString());
-        configParamRepository.save(isProcessing);
+        configParamRepository.updateConfigParamSetValueForName(ConfigParamConstants.IS_PROCESS_WEATHER.name(), flag.toString());
     }
 }
