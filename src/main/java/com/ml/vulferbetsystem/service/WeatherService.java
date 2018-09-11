@@ -109,7 +109,6 @@ public class WeatherService {
         try {
             log.info("processing weather");
 
-//            setProcessing(true);
             List<Planet> planets = planetRepository.findAll();
             cleanWeather(planets);
 
@@ -201,8 +200,7 @@ public class WeatherService {
         ConfigParam isProcessing = configParamRepository.findByNameLock(
                 ConfigParamConstants.IS_PROCESS_WEATHER.name());
 
-        Boolean aBoolean = Boolean.valueOf(isProcessing.getValue());
-        return aBoolean;
+        return Boolean.valueOf(isProcessing.getValue());
     }
 
     private void cleanWeather(List<Planet> planets) {
