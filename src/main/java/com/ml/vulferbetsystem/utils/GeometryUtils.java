@@ -110,18 +110,18 @@ public class GeometryUtils {
     }
 
     /**
-     * Determina un angulo dado una angulo inicial una velocidad angular
-     * por un periodo y la cantidad de periodos que se quiere  calcular
+     * Determina un angulo, dado una angulo inicial una velocidad angular
+     * y un periodo de tiempo
      *
      * @param angularVelocity
-     * @param times
+     * @param timePeriod
      * @return angulo calculado valores entre 0 y 359
      */
-    public static int getAnguleByVelocityAndTimes(int initialPosition, int angularVelocity, int times) {
+    public static int getAnguleByVelocityAndTimes(int initialPosition, int angularVelocity, int timePeriod) {
         if (angularVelocity > 0) {
-            return (initialPosition + (times * angularVelocity)) % 360;
+            return (initialPosition + (timePeriod * angularVelocity)) % 360;
         } else if (angularVelocity < 0) {
-            int aux = initialPosition + (angularVelocity * times);
+            int aux = initialPosition + (angularVelocity * timePeriod);
             return aux < 0 ? (aux % 360) + 360 : aux;
         } else {
             return 0;
